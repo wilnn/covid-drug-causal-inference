@@ -57,4 +57,4 @@ condition_cols = [f'condition{i+1}' for i in range(5)]
 id_col = ['Unnamed: 0']
 other_cols = [col for col in df.columns if col not in condition_cols and col != 'Unnamed: 0']
 df = df[id_col + condition_cols + other_cols]
-df.to_csv('./data/pooled_word2vec_condition_split.csv', index=False)
+df.to_csv('./data/binary.csv', index=False)
