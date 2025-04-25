@@ -12,17 +12,17 @@ def split_condition(condition_str):
 split = df['conditions'].apply(split_condition)
 
 # create 5 new columns
-for i in range(5):
-    df[f'condition{i+1}'] = split.apply(lambda x : x[i])
+# for i in range(5):
+#     df[f'condition{i+1}'] = split.apply(lambda x : x[i])
 
 # convert continuous to binary
-for i in range(5):
-    columns = f'condition{i+1}'
-    median_value = df[columns].median()
-    df[columns] = (df[columns] > median_value).astype(int)
+# for i in range(5):
+#     columns = f'condition{i+1}'
+#     median_value = df[columns].median()
+#     df[columns] = (df[columns] > median_value).astype(int)
 
-median_age = df['age'].median()
-df['age'] = (df['age'] > median_age).astype(int)
+# convert age to binary: 1 if age > 65, otherwise 0
+df['age'] = (df['age'] > 65).astype(int)
 
 # convert categorical column to binary
 def convert_category(df, column):
@@ -50,11 +50,12 @@ for i in category_cols:
     convert_category(df, i)
 
 
-# drop the orginial condition column
-df.drop('conditions', axis=1, inplace=True)
+# drop the orginial condition, zip and severity covid death columns
+cols_drop = ['conditions', 'zip', 'severity_covid_death']
+df.drop(columns=cols_drop, axis=1, inplace=True)
 
-condition_cols = [f'condition{i+1}' for i in range(5)]
+# condition_cols = [f'condition{i+1}' for i in range(5)]
 id_col = ['Unnamed: 0']
-other_cols = [col for col in df.columns if col not in condition_cols and col != 'Unnamed: 0']
-df = df[id_col + condition_cols + other_cols]
+other_cols = [col for col in df.columns if col != 'Unnamed: 0']
+df = df[id_col + other_cols]
 df.to_csv('./data/binary.csv', index=False)

@@ -70,7 +70,7 @@ def causal_table(path, save=False):
         for i, row in enumerate(table):
             tempdf.loc[-1] = row  # adding a row
             tempdf.index = tempdf.index + 1  # shifting index
-        tempdf = tempdf.sort_index()
+        #tempdf = tempdf.sort_index()
         tempdf.to_csv('./data/causal_table.csv', index=False)
     
             
@@ -88,12 +88,14 @@ def calculate_ate(table, col_count, num_unique, save=False):
     print(totals_sum)
     #sys.exit()
     ATEs = []
+    print(table[:, 0])
     for index, row in enumerate(table):
 
         n = 0
         total_causal_effect_score = 0 # total_causal_effect_score for all confounder columns 
         
         i = 1
+        print("each variable", index)
         while i < sum(num_unique):
             
             total_causal_effect_score += calculate_causal_effect_score(table[:, i:i+num_unique[n]], totals_sum, index, num_unique[n])
@@ -124,11 +126,15 @@ def calculate_causal_effect_score(value_cols, totals_sum, row_index, num_unique)
     #print("******************************")
     value_cols = np.array([[*row] for row in value_cols])
     causal_effect_score = 0
+    print("***********")
     for i in range(num_unique):
-        print("***********")
         
+        print(num_unique)
         print(value_cols[row_index, i, 0], value_cols[row_index, i, 1])
-        prob = value_cols[row_index, i, 0] / value_cols[row_index, i, 1]
+        if value_cols[row_index, i, 1] == 0:
+            prob = 0
+        else:
+            prob = value_cols[row_index, i, 0] / value_cols[row_index, i, 1]
         print(prob)
 
         causal_effect_score += (np.sum(value_cols[:, i, 1])/totals_sum) * prob
@@ -147,7 +153,7 @@ def main():
     ATEs = calculate_ate(table, col_count, num_unique)
     df = pd.read_csv('./data/causal_table.csv')
     df['ATEs'] = ATEs
-    print(df['ATEs'])
+    print(ATEs)
     df.to_csv('./data/causal_table.csv', index=False)
 
 if __name__ == "__main__":
@@ -155,74 +161,3 @@ if __name__ == "__main__":
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split
-
-
-
-
-'''
-def calculate_ate(data, treatment_col, outcome_col, covariates):
-    """
-    Calculate the Average Treatment Effect (ATE) for binary treatments.
-
-    Parameters:
-        data (pd.DataFrame): The dataset containing treatment, outcome, and covariates.
-        treatment_col (str): The name of the treatment column.
-        outcome_col (str): The name of the outcome column.
-        covariates (list): List of covariate column names.
-
-    Returns:
-        float: The estimated ATE.
-    """
-    # Split data into treatment and control groups
-    treated = data[data[treatment_col] == 1]
-    control = data[data[treatment_col] == 0]
-
-    # Estimate propensity scores using logistic regression
-    X = data[covariates]
-    y = data[treatment_col]
-    model = LogisticRegression()
-    model.fit(X, y)
-    data['propensity_score'] = model.predict_proba(X)[:, 1]
-
-    # Calculate weights
-    data['weight'] = np.where(data[treatment_col] == 1,
-                              1 / data['propensity_score'],
-                              1 / (1 - data['propensity_score']))
-
-    # Weighted outcome means
-    treated_mean = np.average(treated[outcome_col], weights=treated['weight'])
-    control_mean = np.average(control[outcome_col], weights=control['weight'])
-
-    # Calculate ATE
-    ate = treated_mean - control_mean
-    return ate
-
-# Example usage
-if __name__ == "__main__":
-    # Example dataset
-    data = pd.DataFrame({
-        'treatment': [1, 0, 1, 0, 1, 0],
-        'outcome': [5, 3, 6, 2, 7, 1],
-        'age': [25, 30, 35, 40, 45, 50],
-        'income': [50000, 60000, 55000, 62000, 58000, 61000]
-    })
-
-    treatment_col = 'treatment'
-    outcome_col = 'outcome'
-    covariates = ['age', 'income']
-
-    ate = calculate_ate(data, treatment_col, outcome_col, covariates)
-    print(f"Estimated ATE: {ate}")'''
