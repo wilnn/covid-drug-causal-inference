@@ -58,4 +58,4 @@ df.drop(columns=cols_drop, axis=1, inplace=True)
 id_col = ['Unnamed: 0']
 other_cols = [col for col in df.columns if col != 'Unnamed: 0']
 df = df[id_col + other_cols]
-df.to_csv('./data/pooled_word2vec_condition_split2.csv', index=False)
+df.to_csv('./data/binary.csv', index=False)
