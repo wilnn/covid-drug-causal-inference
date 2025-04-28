@@ -63,4 +63,4 @@ df['age'] = df['age_scaled']
 df.drop('age_scaled', axis=1, inplace=True)
 
 # save back to the file
-df.to_csv('./data/sprocess_data.csv', index=False)
+df.to_csv('./data/process_data.csv', index=False)
