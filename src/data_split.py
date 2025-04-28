@@ -54,12 +54,12 @@ for i in range(5):
 
 
 # # drop the orginial condition, zip and severity covid death columns
-cols_drop = ['Unnamed: 0', 'conditions', 'zip', 'severity_covid_death']
+cols_drop = ['conditions', 'zip', 'severity_covid_death']
 df.drop(columns=cols_drop, axis=1, inplace=True)
 
 condition_cols = [f'condition{i+1}' for i in range(5)]
-# id_col = ['Unnamed: 0']
-# other_cols = [col for col in df.columns if col != 'Unnamed: 0' and col not in condition_cols]
-other_cols = [col for col in df.columns if col not in condition_cols]
-df = df[condition_cols + other_cols]
+id_col = ['Unnamed: 0']
+other_cols = [col for col in df.columns if col != 'Unnamed: 0' and col not in condition_cols]
+# other_cols = [col for col in df.columns if col not in condition_cols]
+df = df[id_col + condition_cols + other_cols]
 df.to_csv('./data/split_condition.csv', index=False)
