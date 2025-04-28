@@ -12,8 +12,8 @@ def split_condition(condition_str):
 split = df['conditions'].apply(split_condition)
 
 # create 5 new columns
-# for i in range(5):
-#     df[f'condition{i+1}'] = split.apply(lambda x : x[i])
+for i in range(5):
+    df[f'condition{i+1}'] = split.apply(lambda x : x[i])
 
 # convert continuous to binary
 # for i in range(5):
@@ -22,40 +22,43 @@ split = df['conditions'].apply(split_condition)
 #     df[columns] = (df[columns] > median_value).astype(int)
 
 # convert age to binary: 1 if age > 65, otherwise 0
-df['age'] = (df['age'] > 65).astype(int)
+# df['age'] = (df['age'] > 65).astype(int)
 
-# convert categorical column to binary
-def convert_category(df, column):
-    category = df[column].unique()
-    for i in category:
-        # get indicies for category
-        category_indicies = df[df[column] == i].index
-        # if there are less than 2 rows then set to 0
-        if len(category_indicies) < 2:
-            df.loc[category_indicies, column] = 0
-            continue
-        random = np.random.random(len(category_indicies))
-        # sorted indices based on the random
-        sorted_index = [index for _, index in sorted(zip(random, category_indicies))]
+# # convert categorical column to binary
+# def convert_category(df, column):
+#     category = df[column].unique()
+#     for i in category:
+#         # get indicies for category
+#         category_indicies = df[df[column] == i].index
+#         # if there are less than 2 rows then set to 0
+#         if len(category_indicies) < 2:
+#             df.loc[category_indicies, column] = 0
+#             continue
+#         random = np.random.random(len(category_indicies))
+#         # sorted indices based on the random
+#         sorted_index = [index for _, index in sorted(zip(random, category_indicies))]
 
-        # calculate cutoff point 50%
-        calculate = len(sorted_index) // 2
+#         # calculate cutoff point 50%
+#         calculate = len(sorted_index) // 2
 
-        # asign binary (0 to bottom 50%, 1 to top 50%)
-        df.loc[sorted_index[:calculate], column] = 0
-        df.loc[sorted_index[calculate:], column] = 1
+#         # asign binary (0 to bottom 50%, 1 to top 50%)
+#         df.loc[sorted_index[:calculate], column] = 0
+#         df.loc[sorted_index[calculate:], column] = 1
 
-category_cols = ['zip', 'ethnicity_concept_id', 'gender_concept_id', 'race_concept_id']
-for i in category_cols:
-    convert_category(df, i)
+# category_cols = ['zip', 'ethnicity_concept_id', 'gender_concept_id', 'race_concept_id']
+# for i in category_cols:
+#     convert_category(df, i)
+
+# DROP THE ORIGINAL CONDITION
+df.drop('conditions', axis=1, inplace=True)
 
 
-# drop the orginial condition, zip and severity covid death columns
-cols_drop = ['conditions', 'zip', 'severity_covid_death']
-df.drop(columns=cols_drop, axis=1, inplace=True)
+# # drop the orginial condition, zip and severity covid death columns
+# cols_drop = ['conditions', 'zip', 'severity_covid_death']
+# df.drop(columns=cols_drop, axis=1, inplace=True)
 
-# condition_cols = [f'condition{i+1}' for i in range(5)]
+condition_cols = [f'condition{i+1}' for i in range(5)]
 id_col = ['Unnamed: 0']
-other_cols = [col for col in df.columns if col != 'Unnamed: 0']
-df = df[id_col + other_cols]
-df.to_csv('./data/binary.csv', index=False)
+other_cols = [col for col in df.columns if col != 'Unnamed: 0' and col not in condition_cols]
+df = df[id_col +condition_cols + other_cols]
+df.to_csv('./data/split_condition.csv', index=False)
