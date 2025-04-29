@@ -59,10 +59,10 @@ def propensity_scores(df):
         y_pred = model.predict_proba(treatment_group)
         
 
-        df[f'{drug} group vs control group'] = np.nan
-        df.loc[treament_group_indexes, f'{drug} group vs control group'] = y_pred[:, 1]
+        df[f'{drug}_group_vs_control_group'] = np.nan
+        df.loc[treament_group_indexes, f'{drug}_group_vs_control_group'] = y_pred[:, 1]
         y_pred = model.predict_proba(control_group)
-        df.loc[control_group_indexes, f'{drug} group vs control group'] = y_pred[:, 1]
+        df.loc[control_group_indexes, f'{drug}_group_vs_control_group'] = y_pred[:, 1]
     return df
 
 
