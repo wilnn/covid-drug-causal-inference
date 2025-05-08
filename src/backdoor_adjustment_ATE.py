@@ -151,10 +151,10 @@ def main():
     #print(table.shape)
     #print(table[0])
     ATEs = calculate_ate(table, col_count, num_unique)
-    df = pd.read_csv('./data/causal_table.csv')
+    df = pd.read_csv('./results/causal_table.csv')
     df['ATEs'] = ATEs
     print(ATEs)
-    df.to_csv('./data/causal_table.csv', index=False)
+    df.to_csv('./results/causal_table.csv', index=False)
 
 if __name__ == "__main__":
     main()
