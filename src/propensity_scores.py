@@ -9,7 +9,7 @@ from sklearn.metrics import precision_score, recall_score, classification_report
 
 df = pd.read_csv('./data/preprocessed_data.csv')
 
-def propensity_scores(df):
+def propensity_scores(df, sampling=False):
     drugs = ['trazodone', 'amitriptyline', 'fluoxetine', 'citalopram', 'paroxetine', 'venlafaxine', 
                 'vilazodone', 'vortioxetine', 'sertraline', 'bupropion', 'mirtazapine',
                 'desvenlafaxine', 'doxepin', 'duloxetine', 'escitalopram', 'nortriptyline']
@@ -40,12 +40,14 @@ def propensity_scores(df):
                                                 # assign the propensity score to those row later
         control_group = control_group.to_numpy()
 
-        
-        zeros = np.zeros((control_group.shape[0],)) # label for control_group
-        #print(control_group.shape)
-        #zeros = zeros[:treatment_group.shape[0]]
-        #control_group = control_group[:treatment_group.shape[0]]
-        
+        if sampling:
+            random_indices = np.random.choice(control_group.shape[0], size=treatment_group.shape[0], replace=False)
+            control_group = control_group[random_indices]
+            control_group_indexes = control_group_indexes[random_indices]
+            zeros = np.zeros((treatment_group.shape[0],))
+        else:
+            zeros = np.zeros((control_group.shape[0],)) # label for control_group
+
         X = np.concatenate((treatment_group, control_group), axis=0)
         y = np.concatenate((ones, zeros), axis=0)
 
@@ -66,7 +68,7 @@ def propensity_scores(df):
     return df
 
 
-
 if __name__ == "__main__":
     df = propensity_scores(df)
+
     df.to_csv('./data/also_have_propensity_score.csv', index=False)

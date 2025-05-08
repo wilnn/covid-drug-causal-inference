@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.neighbors import NearestNeighbors
-
+import sys
 
 df = pd.read_csv('./data/also_have_propensity_score.csv')
 
@@ -37,10 +37,12 @@ def propensity_score_matching(df):
                                                 # assign the propensity score to those row later
         control_group = control_group.to_numpy()
 
+        control_group = control_group[~np.isnan(control_group)]
         
         #control_group = control_group[:treatment_group.shape[0]]
 
         knn = NearestNeighbors(n_neighbors=1)  # 1 nearest neighbor
+        #print(control_group)
         knn.fit(control_group.reshape(-1, 1)) # reshape to make control_group becomes a 2D array. Because scikit-learn’s NearestNeighbors expects 2D input
         
         distances, indices = knn.kneighbors(treatment_group.reshape(-1, 1))
@@ -56,14 +58,6 @@ def propensity_score_matching(df):
         df.loc[treament_group_indices, f'{drug}_group_match_id_in_control_group'] = matched_control_indices
 
     return df
-
-
-
-
-
-
-        
-
 
 
 if __name__ == "__main__":

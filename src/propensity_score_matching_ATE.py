@@ -10,11 +10,11 @@ df = pd.read_csv('./data/after_propensity_score_matching.csv')
 
 
 def ATE(df):
-    print("ATE:")
+    #print("ATE:")
     drugs = ['trazodone', 'amitriptyline', 'fluoxetine', 'citalopram', 'paroxetine', 'venlafaxine', 
                 'vilazodone', 'vortioxetine', 'sertraline', 'bupropion', 'mirtazapine',
                 'desvenlafaxine', 'doxepin', 'duloxetine', 'escitalopram', 'nortriptyline']
-    
+    effects =[]
     for drug in drugs: 
         condition = df[drug] == 1
         treatment_group = df.loc[condition, ['outcome', f'{drug}_group_match_id_in_control_group']]
@@ -31,15 +31,16 @@ def ATE(df):
         control_match_indices = control_match_indices[~np.isnan(control_match_indices)]
 
         matched_control_group_outcome = df.loc[control_match_indices]['outcome'].to_numpy()
-        print(f"{drug}: ", np.mean(treatment_group_outcome) - np.mean(matched_control_group_outcome))
 
+        effects.append(np.mean(treatment_group_outcome) - np.mean(matched_control_group_outcome))
+    return effects
 
 def linear_regression_treatment_effect(df):
-    print("linear_regression_treatment_effect:")
+    #print("linear_regression_treatment_effect:")
     drugs = ['trazodone', 'amitriptyline', 'fluoxetine', 'citalopram', 'paroxetine', 'venlafaxine', 
                 'vilazodone', 'vortioxetine', 'sertraline', 'bupropion', 'mirtazapine',
                 'desvenlafaxine', 'doxepin', 'duloxetine', 'escitalopram', 'nortriptyline']
-    
+    effects = []
     for drug in drugs: 
         condition = df[drug] == 1
         treatment_group = df.loc[condition, ['condition1', 'condition2', 'condition3',
@@ -72,7 +73,6 @@ def linear_regression_treatment_effect(df):
         X = np.concatenate((treatment_group, matched_control_group), axis=0)
         y = np.concatenate((treatment_group_outcome, matched_control_group_outcome), axis=0)
 
-
         X_shuffled, y_shuffled = shuffle(X, y, random_state=42)
 
         #model = LogisticRegression(class_weight='balanced')
@@ -90,10 +90,23 @@ def linear_regression_treatment_effect(df):
         print("Bias (intercept):", bias)
         print("***************************************************************\n")'''
         
-        print(f"{drug}: ", weights[-1])
+        #print(f"{drug}: ", weights[-1])
+        effects.append(weights[-1])
+    return effects
 
 
 if __name__ == "__main__":
-    ATE(df)
+    drugs = ['trazodone', 'amitriptyline', 'fluoxetine', 'citalopram', 'paroxetine', 'venlafaxine', 
+                'vilazodone', 'vortioxetine', 'sertraline', 'bupropion', 'mirtazapine',
+                'desvenlafaxine', 'doxepin', 'duloxetine', 'escitalopram', 'nortriptyline']
+    effects = ATE(df)
+    print("ATE:")
+    for i, drug in enumerate(drugs):
+        print(drug, ": ", effects[i])
+        
     print("\n*******************************************\n")
-    linear_regression_treatment_effect(df)
+    
+    effects = linear_regression_treatment_effect(df)
+    print("linear_regression_treatment_effect:")
+    for i, drug in enumerate(drugs):
+        print(drug, ": ", effects[i])
