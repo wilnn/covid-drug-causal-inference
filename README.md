@@ -8,7 +8,7 @@
 - The confounders can create the treatment bias, which is when the doctor tends to give a certain treatment to the patients who have a certain confounder (doctors like to give treatment A to people who are less than 30 years old and treatment B to people who are more than 65 years old).
 This creates the imbalance and unfairness in the data. Also, the confounder can affect the outcome (young people will recover faster and have a higher chance of survival compared to old people. This makes treatment A appear to be more effective than treatment B.)
 - In order to address these problems, a Randomized Controlled Trial (RCT) is often performed. IN RCT, the confounders are controlled during the experiment to ensure fair and accurate results. Even though RCT is the most ideal and accurate method to measure the effectiveness of treatments, it is not always possible to do and can be expensive to perform.
-- In order to find the effectiveness of a treatment when RCT is not possible, we can use the Causal Inference techniques.  
+- In order to find the effectiveness of a treatment when RCT is not possible, we can use other Causal Inference techniques.  
 - Causal inference techniques allow us to estimate the effect of treatments using oservational data. This observational data is the dataset that contains the information about the patients (such as their medical conditions(heart disease, fever, etc.,), ages, gender, etc.,), that treatment (medicines) did the patient take and the outcome of after taking that treatment(whether they are alive (recovered) or not).
 We will use 2 causal inference technique: Backdoor Adjustment and propensity Score matching (PSM).
 
