@@ -1,4 +1,4 @@
-cd import numpy as np
+import numpy as np
 import scipy.stats
 from propensity_score_matching import propensity_score_matching
 from propensity_score_matching_ATE import ATE, linear_regression_treatment_effect
